@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Server Assignment Page</title>
+</head>
+<body>
+
+<form action="/do_assignment.html">
+
+<h1>Site assignment</h1>
+     
+<label for="site_names">Choose a site:</label>
+<select name="site_name" id="site_names">
+{% for row in site_names %}
+<option value="{{ row }}">{{ row }}</option>
+{% endfor %}
+</ul>
+</select><br><br>
+
+<label for="site_id">Choose an ID:</label>
+<select name="site_id" id="site_id">
+{% for row in site_ids %}
+<option value="{{ row }}">{{ row }}</option>
+{% endfor %}
+</ul>
+</select><br><br>
+
+<label for="mac_address">Enter the MAC Address:</label>
+<input name="mac_address" id="mac_address" type="text"><br><br>
+
+<input type="submit" value="Submit">
+
+</form>
+
+</body>
+</html>
