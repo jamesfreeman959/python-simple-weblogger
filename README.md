@@ -15,4 +15,6 @@ A really simple example of writing to a log file based on a URL submitted with a
 - https://stackoverflow.com/questions/5074803/retrieving-parameters-from-a-url
 - https://stackoverflow.com/questions/16503560/read-specific-columns-from-a-csv-file-with-csv-module
 - http://www.patrickdenis.biz/blog/jinja2-and-csv/
+- https://stackoverflow.com/questions/6380057/python-binding-socket-address-already-in-use
+- https://stackoverflow.com/questions/1112343/how-do-i-capture-sigint-in-python
 

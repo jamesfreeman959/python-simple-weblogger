@@ -12,6 +12,7 @@ try:
 except ImportError:
     # Python 2
     from SocketServer import TCPServer
+import socket
 import logging
 import sys
 try:
@@ -32,11 +33,11 @@ except ImportError:
     from urlparse import parse_qs
 
 from datetime import datetime
-
 from jinja2 import Template
 import csv
 import re
 from collections import defaultdict
+import signal
 
 
 try:
@@ -51,6 +52,10 @@ SOURCE_FILE = 'test.csv'
 
 ASSIGNMENT_PATH='/tmp'
 
+class reuseTCPServer(TCPServer):
+    def server_bind(self):
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.socket.bind(self.server_address)
 
 class quietServer(SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
@@ -118,6 +123,10 @@ class quietServer(SimpleHTTPRequestHandler):
             site_names = list(set(columns['site name']))
             site_ids = list(set(columns['site id']))
 
+            # Sort the lists to make the drop downs more friendly
+            site_names.sort()
+            site_ids.sort()
+
             # Render the Jinja2 template for output over the HTTP server
             site_config = template.render(site_names=site_names, site_ids=site_ids)
             site_config += '\n'
@@ -158,10 +167,14 @@ class quietServer(SimpleHTTPRequestHandler):
                 self.wfile.write(bytes(msg_url_ok.encode("utf8")))
 
 
-try:
-    with TCPServer(("", PORT), quietServer) as httpd:
-        httpd.serve_forever()
-except:
-    httpd = TCPServer(("", PORT), quietServer)
-    httpd.serve_forever()
+def signal_handler(sig, frame):
+    print('Shutting down...')
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
+
+httpd = reuseTCPServer(("", PORT), quietServer)
+httpd.allow_reuse_address = True
+httpd.serve_forever()
 
